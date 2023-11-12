@@ -1,13 +1,14 @@
 // Class to manage the game words.
 
 const fs = require("fs");
+const axios = require("axios");
 
 class WordManager {
   index = 0;
 
-  getWord = (level) => {
-    let buffer = fs.readFileSync("words.txt");
-    let wordList = buffer.toString();
+  getWord = async (level) => {
+    let response = await axios.get("https://raw.githubusercontent.com/powerlanguage/word-lists/master/1000-most-common-words.txt");
+    let wordList = response.data;
     let words = wordList.split("\n");
 
     if(level===1) {
