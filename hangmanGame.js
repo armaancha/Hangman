@@ -21,14 +21,15 @@ class HangmanGame {
     return this.playerWord.includes("_") ? false : true;
   }
 
-  play = () => {
+  play = async () => {
     this.initialize();
 
     let sm = new SettingsManager();
     let settings = sm.askSettings();
 
     let wm = new WordManager();
-    this.word = wm.getWord(settings.level).toUpperCase();
+    this.word = await wm.getWord(settings.level);
+    this.word = this.word.toUpperCase();
     for(let i=0;i<this.word.length;i++) {
       this.playerWord = this.playerWord + "_";
     }
@@ -36,7 +37,7 @@ class HangmanGame {
 
     let guesses = [];
     let solved = false;
-    while(!solved) {
+    while(!solved && settings.guessCount>0) {
       let letter = prompt("What is your guess? ")
       letter = letter.toUpperCase();
       if(letter.length!=1 || 
@@ -47,8 +48,10 @@ class HangmanGame {
           console.log(this.word + "\n");
           return;
         }
-        console.log("Invalid guess.\n");
-        continue;
+        if(letter.length<=2) {
+          console.log("Invalid guess.\n");
+          continue;
+        }
       }
 
       settings.guessCount--;
